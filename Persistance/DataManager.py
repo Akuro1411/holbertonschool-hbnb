@@ -7,18 +7,17 @@ class DataManager(IPersistenceManager):
 
     def save(self, entity):
         entity_type = entity.__class__.__name__
-        self.data_dict[entity_type][entity.object_id] = entity
+        self.data_dict[entity_type][str(entity.object_id)] = entity.__dict__
         return f"{entity_type} is saved successfully"
 
-    def get(self, entity, entity_type):
-        entity_id = entity.object_id
-        return f"Here you are: {self.data_dict[entity_type][entity_id]}"
+    def get(self, entity_id, entity_type):
+        return self.data_dict[entity_type][str(entity_id)]
 
     def update(self, entity):
         entity_type = entity.__class__.__name__
-        self.data_dict[entity_type][entity.object_id] = entity
+        self.data_dict[entity_type][str(entity.object_id)] = entity.__dict__
         return "Entity is updated successfully"
 
     def delete(self, entity_id, entity_type):
-        del self.data_dict[entity_type][entity_id]
+        del self.data_dict[entity_type][str(entity_id)]
         return "Entity is deleted successfully"
