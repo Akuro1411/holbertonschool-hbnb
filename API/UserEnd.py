@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from Validation.UserValidation import create_user
-from Persistance.DataManager import DataManager
+from Persistance import DataManager
 
 users = Blueprint('users', __name__)
 simple_db = DataManager()
