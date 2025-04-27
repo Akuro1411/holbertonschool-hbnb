@@ -3,7 +3,7 @@ from Persistance.IPersistance import IPersistenceManager
 
 class DataManager(IPersistenceManager):
     def __init__(self):
-        self.data_dict = {"Place": {}, "User": {}, "Amenity": {}, "Reviews": {}, "City": {}, "Country": {}}
+        self.data_dict = {"Place": {}, "User": {}, "Amenity": {}, "Review": {}, "City": {}, "Country": {}}
 
     def save(self, entity):
         entity_type = entity.__class__.__name__
