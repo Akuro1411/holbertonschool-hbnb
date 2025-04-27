@@ -1,5 +1,4 @@
-
-m flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify
 from Persistance.DataManager import simple_db
 from Model.Reviews import Review
 
@@ -22,10 +21,16 @@ def reviews_and_places(place_id):
     if request.method == 'POST':
         try:
             data = request.get_json()
+            place = simple_db.get(place_id, 'Place')
+            user = simple_db.get(data['userId'], 'User')
             if data:
-                new_review = Review(user=data['userId'], place=str(place_id), rate=data['placeRate'], comment=data['userComment'])
-                simple_db.save(new_review)
-                return jsonify({"Success": "Your review is added"})
+                if place and user:
+                    new_review = Review(user=data['userId'], place=str(place_id), rate=data['placeRate'], comment=data['userComment'])
+                    place['reviews'].append(new_review.object_id)
+                    simple_db.save(new_review)
+                    return jsonify({"Success": "Your review is added"})
+                else:
+                    return jsonify({"Error": "This place doesn't exist"})
         except Exception:
             return jsonify({"Error": "Missing fields at review"}), 400
     return None
@@ -59,5 +64,4 @@ def work_on_review(review_id):
         except Exception:
             return jsonify({"Error": "There is no such review"})
     return 0
-
 
