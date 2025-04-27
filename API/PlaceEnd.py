@@ -1,4 +1,5 @@
-from flask import Blueprint, request, jsonify
+
+m flask import Blueprint, request, jsonify
 from Model.Places import Place
 from Persistance.DataManager import simple_db
 
@@ -19,7 +20,7 @@ def get_or_create_place():
         try:
             all_places = simple_db.data_dict['Place']
             coordinates = [(all_places[obj_id]["latitude"], all_places[obj_id]["longitude"]) for obj_id in all_places]
-            if (data['placeLati'], data['placeLong']) not in coordinates:
+            if (data['placeLati'], data['placeLong']) not in coordinates and simple_db.get(data['hostId'], 'User'):
                 new_place = Place(place_name=data['placeName'],
                                   place_price=data['placePrice'],
                                   place_address=data['placeAddress'],
@@ -28,13 +29,17 @@ def get_or_create_place():
                                   place_longitude=data['placeLong'],
                                   place_description=data['placeDesc'],
                                   guest_number=data['guestNumber'],
-                                  count_rooms=data['countRooms'])
+                                  count_rooms=data['countRooms'],
+                                  host_of_place=data['hostId'])
+                host = simple_db.get(data['hostId'], 'User')
+                host['owned_places'].append(new_place.object_id)
                 simple_db.save(new_place)
                 return jsonify({"Success": "The new place is added successfully"}), 201
             else:
                 return jsonify({"Error": "The place exists at given coordinates"}), 409
         except Exception:
             return jsonify({"Error": "Post data is not valid"}), 400
+    return 0
 
 
 @places.route('/places/<place_id>', methods=['GET', 'PUT', 'DELETE'])
@@ -62,3 +67,4 @@ def work_with_id(place_id):
         except Exception:
             return jsonify({"Error": "There is no such place"})
 
+    return 0
